@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tech.EPL.config.ApiKeyConfig;
-import com.tech.EPL.metro.dto.StationInfoDto;
 import com.tech.EPL.metro.service.LostFoundService;
 import com.tech.EPL.metro.service.SearchStationNameService;
+import com.tech.EPL.metro.service.StationDirectionService;
 import com.tech.EPL.metro.service.StationInfoService;
 import com.tech.EPL.metro.service.StationPassDataService;
 
@@ -29,6 +29,7 @@ public class MetroRestController {
 	private final StationInfoService stationInfoService;
 	private final LostFoundService lostFoundService;
 	private final StationPassDataService stationPassDataService;
+	private final StationDirectionService stationDirectionService;
 	
 	//metro1 지하철역 검색 리스트나오기(api url연결)
 	@GetMapping("/searchStationName")
@@ -36,7 +37,7 @@ public class MetroRestController {
 		
 		
 		model.addAttribute("searchValue",searchValue);
-		model.addAttribute("apiKeyConfig", apiKeyConfig);
+		
 		searchStationNameService.execution(model);
 		List<Map> list = (List<Map>) model.getAttribute("list");
 		
@@ -57,6 +58,19 @@ public class MetroRestController {
 		Map<String, Object> info = (Map<String, Object>) model.getAttribute("info");
 		
 		return info;
+	}
+	
+	//metro2 지하철 길안내 경로찾기 (api url연결)
+	@GetMapping("/direction")
+	public Map<String, Object> direction(@RequestParam String departure, 
+			@RequestParam String destination, Model model) {
+		model.addAttribute("apiKeyConfig", apiKeyConfig);
+		model.addAttribute("departure",departure);
+		model.addAttribute("destination",destination);
+		
+		stationDirectionService.execution(model);
+		
+		return (Map<String, Object>) model.getAttribute("data");
 	}
 	
 	
